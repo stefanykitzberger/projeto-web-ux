@@ -12,18 +12,23 @@ function loadData() {
   setStatus("carregando...", "loading");
 
   fetch("https://jsonplaceholder.typicode.com/posts")
-    .then((response) => response.json())
+    .then((response) => {
+      return response.json();
+    })
     .then((posts) => {
       appState.posts = posts;
       renderPostsTable();
     })
     .catch((error) => {
       setStatus("erro na API", "error");
+      showToast("Falha ao carregar dados da API.", "danger");
       console.error("Erro ao carregar posts:", error);
     });
 
   fetch("https://jsonplaceholder.typicode.com/users")
-    .then((response) => response.json())
+    .then((response) => {
+      return response.json();
+    })
     .then((users) => {
       appState.users = users;
       populateUserSelect();
@@ -32,6 +37,7 @@ function loadData() {
     })
     .catch((error) => {
       setStatus("erro na API", "error");
+      showToast("Falha ao carregar dados da API.", "danger");
       console.error("Erro ao carregar users:", error);
     });
 }
