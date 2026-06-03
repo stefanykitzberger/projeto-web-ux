@@ -10,13 +10,32 @@
 	<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-	<div id="app">
-		<header>
-			<h1 class="logo">FeedConnect</h1>
-		</header>
-		<main>
-		</main>
-	</div>
+
+    <div id="app">
+        <header>
+            <h1 class="logo"><span class="logo-dot"></span>Feed<span>Connect</span></h1>
+            <span id="status-badge" class="status-badge loading" role="status" aria-live="polite"></span>
+        </header>
+
+        <nav>
+            <button class="tab-btn active" data-tab="posts">Gerenciar Posts</button>
+            <button class="tab-btn" data-tab="users">Gerenciar Usuários</button>
+            <button class="tab-btn" data-tab="feed">Visualizar Feed</button>
+        </nav>
+
+        <main>
+
+            <section id="panel-posts" class="panel active">
+                <h2 class="section-title">Posts cadastrados</h2>
+            </section>
+            <section id="panel-users" class="panel">
+                <h2 class="section-title">Usuários da rede</h2>
+            </section>
+            <section id="panel-feed" class="panel">
+                <h2 class="section-title">Timeline pública</h2>
+            </section>
+            </main>
+    </div>
 	<script src="script.js"></script>
 </body>
 </html>
