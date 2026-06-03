@@ -1,41 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Feed Connect</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-	<link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feed Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <div id="app">
-        <header>
-            <h1 class="logo"><span class="logo-dot"></span>Feed<span>Connect</span></h1>
-            <span id="status-badge" class="status-badge loading" role="status" aria-live="polite"></span>
-        </header>
+      <header>
+        <h1 class="logo">
+          <span class="logo-dot"></span>Feed<span>Connect</span>
+        </h1>
+        <span
+          id="status-badge"
+          class="status-badge loading"
+          role="status"
+          aria-live="polite"
+        ></span>
+      </header>
 
-        <nav>
-            <button class="tab-btn active" data-tab="posts">Gerenciar Posts</button>
-            <button class="tab-btn" data-tab="users">Gerenciar Usuários</button>
-            <button class="tab-btn" data-tab="feed">Visualizar Feed</button>
-        </nav>
+      <nav>
+        <button class="tab-btn active" data-tab="posts">Gerenciar Posts</button>
+        <button class="tab-btn" data-tab="users">Gerenciar Usuários</button>
+        <button class="tab-btn" data-tab="feed">Visualizar Feed</button>
+      </nav>
 
-        <main>
+      <main>
+        <section id="panel-posts" class="panel active">
+          <div class="form-card">
+            <h2>Novo Post</h2>
+            <form id="post-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="sel-author">Autor</label>
+                  <select id="sel-author" required></select>
+                </div>
+                <div class="form-group form-group-wide">
+                  <label for="inp-title">Título</label>
+                  <input
+                    id="inp-title"
+                    type="text"
+                    placeholder="Título do post..."
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form-row form-row-spaced">
+                <div class="form-group">
+                  <label for="inp-body">Conteúdo</label>
+                  <textarea
+                    id="inp-body"
+                    placeholder="Escreva o conteúdo..."
+                    required
+                  ></textarea>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                  + Publicar Post
+                </button>
+              </div>
+            </form>
+          </div>
 
-            <section id="panel-posts" class="panel active">
-                <h2 class="section-title">Posts cadastrados</h2>
-            </section>
-            <section id="panel-users" class="panel">
-                <h2 class="section-title">Usuários da rede</h2>
-            </section>
-            <section id="panel-feed" class="panel">
-                <h2 class="section-title">Timeline pública</h2>
-            </section>
-            </main>
+          <h2 class="section-title">Posts cadastrados</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#ID</th>
+                  <th>Autor (userId)</th>
+                  <th>Título</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="posts-tbody">
+                <tr>
+                  <td colspan="4">
+                    <div class="state-msg">carregando posts...</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="panel-users" class="panel">
+          <h2 class="section-title">Usuários da rede</h2>
+        </section>
+        <section id="panel-feed" class="panel">
+          <h2 class="section-title">Timeline pública</h2>
+        </section>
+      </main>
     </div>
-	<script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
