@@ -4,10 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feed Connect</title>
+  <title>Feed Connect — Painel de Gerenciamento</title>
+  <meta name="description" content="Painel de gerenciamento de posts e usuários do Feed Connect." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -15,108 +19,192 @@
 
   <div id="app">
     <header>
-      <h1 class="logo"><span class="logo-dot"></span>Feed<span>Connect</span></h1>
-      <span id="status-badge" class="status-badge loading" role="status" aria-live="polite">carregando...</span>
+      <h1 class="logo" aria-label="Feed Connect">
+        <span class="logo-dot" aria-hidden="true"></span>Feed<span>Connect</span>
+      </h1>
+      <span id="status-badge" class="status-badge loading" role="status" aria-live="polite"
+        aria-label="Status da conexão: carregando">
+        <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> carregando...
+      </span>
     </header>
 
-    <nav>
-      <button class="tab-btn active" data-tab="posts">Gerenciar Posts</button>
-      <button class="tab-btn" data-tab="users">Gerenciar Usuários</button>
-      <button class="tab-btn" data-tab="feed">Visualizar Feed</button>
+    <nav aria-label="Navegação principal">
+      <button class="tab-btn active" data-tab="posts" aria-selected="true" aria-controls="panel-posts" role="tab">
+        Gerenciar Posts
+      </button>
+      <button class="tab-btn" data-tab="users" aria-selected="false" aria-controls="panel-users" role="tab">
+        Gerenciar Usuários
+      </button>
+      <button class="tab-btn" data-tab="feed" aria-selected="false" aria-controls="panel-feed" role="tab">
+        Visualizar Feed
+      </button>
     </nav>
 
     <main>
 
-      <section id="panel-posts" class="panel active">
+      <section id="panel-posts" class="panel active" role="tabpanel" aria-labelledby="tab-posts">
+
         <div class="form-card">
           <h2>Novo Post</h2>
-          <form id="post-form">
+          <form id="post-form" novalidate>
             <div class="form-row">
               <div class="form-group">
-                <label for="sel-author">Autor</label>
-                <select id="sel-author" required></select>
+                <label for="sel-author">
+                  Autor <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <select id="sel-author" required aria-required="true" aria-describedby="sel-author-err">
+                  <option value="" disabled selected>Selecione um autor…</option>
+                </select>
+                <span class="field-error" id="sel-author-err" role="alert"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Selecione um autor.</span>
               </div>
               <div class="form-group form-group-wide">
-                <label for="inp-title">Título</label>
-                <input id="inp-title" type="text" placeholder="Título do post..." required />
+                <label for="inp-title">
+                  Título <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <input id="inp-title" type="text" placeholder="Título do post…" required aria-required="true"
+                  aria-describedby="inp-title-err" maxlength="120" autocomplete="off" />
+                <span class="field-error" id="inp-title-err" role="alert"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Título obrigatório (mín. 5
+                  caracteres).</span>
               </div>
             </div>
             <div class="form-row form-row-spaced">
               <div class="form-group">
-                <label for="inp-body">Conteúdo</label>
-                <textarea id="inp-body" placeholder="Escreva o conteúdo..." required></textarea>
+                <label for="inp-body">
+                  Conteúdo <span class="required-mark" aria-hidden="true">*</span>
+                </label>
+                <textarea id="inp-body" placeholder="Escreva o conteúdo do post…" required aria-required="true"
+                  aria-describedby="inp-body-err" maxlength="1000" rows="4"></textarea>
+                <span class="field-error" id="inp-body-err" role="alert"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Conteúdo obrigatório (mín. 10
+                  caracteres).</span>
               </div>
             </div>
             <div class="form-actions">
-              <button type="submit" class="btn btn-primary">+ Publicar Post</button>
+              <button type="submit" class="btn btn-primary" id="post-submit-btn">
+                + Publicar Post
+              </button>
+              <span class="char-counter" id="body-counter" aria-live="polite">0 / 1000</span>
             </div>
           </form>
         </div>
 
-        <h2 class="section-title">Posts cadastrados</h2>
+        <div class="feed-toolbar">
+          <h2 class="section-title" style="margin:0;">Posts cadastrados</h2>
+        </div>
+
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#ID</th>
-                <th>Autor (userId)</th>
-                <th>Título</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="posts-tbody">
-              <tr>
-                <td colspan="4">
-                  <div class="state-msg">carregando posts...</div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-toolbar">
+            <div class="search-input-wrap">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <input type="search" class="search-input" id="posts-search" placeholder="Buscar post…"
+                aria-label="Buscar posts" autocomplete="off" />
+            </div>
+            <span class="table-count" id="posts-count" aria-live="polite"></span>
+          </div>
+          <div class="table-wrap-inner">
+            <table aria-label="Lista de posts">
+              <thead>
+                <tr>
+                  <th scope="col" class="sortable" data-sort="id">#ID</th>
+                  <th scope="col">Autor</th>
+                  <th scope="col" class="sortable" data-sort="title">Título</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="posts-tbody">
+                <tr>
+                  <td colspan="4">
+                    <div class="state-msg">
+                      <span class="skeleton" style="width:60%;height:14px;"></span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <section id="panel-users" class="panel">
-        <h2 class="section-title">Usuários da rede</h2>
+      <section id="panel-users" class="panel" role="tabpanel" aria-labelledby="tab-users">
+
+        <div class="feed-toolbar">
+          <h2 class="section-title" style="margin:0;">Usuários da rede</h2>
+        </div>
+
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#ID</th>
-                <th>Nome</th>
-                <th>Username</th>
-                <th>E-mail</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="users-tbody">
-              <tr>
-                <td colspan="5">
-                  <div class="state-msg">carregando usuários...</div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-toolbar">
+            <div class="search-input-wrap">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <input type="search" class="search-input" id="users-search" placeholder="Buscar usuário…"
+                aria-label="Buscar usuários" autocomplete="off" />
+            </div>
+            <span class="table-count" id="users-count" aria-live="polite"></span>
+          </div>
+          <div class="table-wrap-inner">
+            <table aria-label="Lista de usuários">
+              <thead>
+                <tr>
+                  <th scope="col">#ID</th>
+                  <th scope="col" class="sortable" data-sort="name">Nome</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <tr>
+                  <td colspan="5">
+                    <div class="state-msg">
+                      <span class="skeleton" style="width:60%;height:14px;"></span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <section id="panel-feed" class="panel">
-        <h2 class="section-title">Timeline pública</h2>
-        <div id="feed-list">
-          <div class="state-msg">aguardando dados...</div>
+      <section id="panel-feed" class="panel" role="tabpanel" aria-labelledby="tab-feed">
+        <div class="feed-toolbar">
+          <h2 class="section-title" style="margin:0;">Timeline pública</h2>
+          <div class="search-input-wrap" style="max-width:240px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input type="search" class="search-input" id="feed-search" placeholder="Buscar no feed…"
+              aria-label="Buscar no feed" autocomplete="off" />
+          </div>
+        </div>
+        <div id="feed-list" aria-live="polite">
+          <div class="state-msg">
+            <span class="skeleton" style="width:50%;height:14px;"></span>
+          </div>
         </div>
       </section>
 
     </main>
   </div>
 
-  <dialog id="user-profile-dialog" aria-modal="true" aria-label="Perfil do usuário">
+  <div id="toast-container" aria-live="assertive" aria-atomic="false"></div>
+
+  <dialog id="user-profile-dialog" aria-modal="true" aria-labelledby="profile-dialog-title">
     <div class="dialog-header">
-      <div class="dialog-avatar" id="dp-avatar"></div>
+      <div class="dialog-avatar" id="dp-avatar" aria-hidden="true"></div>
       <div class="dialog-names">
-        <span class="dialog-name" id="dp-name"></span>
+        <span class="dialog-name" id="dp-name" id="profile-dialog-title"></span>
         <span class="dialog-username" id="dp-username"></span>
       </div>
-      <button class="dialog-close" id="profile-close-btn" aria-label="Fechar">&times;</button>
+      <button class="dialog-close" id="profile-close-btn" aria-label="Fechar perfil">&times;</button>
     </div>
     <div class="dialog-body">
       <div class="dialog-section">
@@ -130,7 +218,7 @@
             <span class="dialog-field-label">Telefone</span>
             <span class="dialog-field-value" id="dp-phone"></span>
           </div>
-          <div class="dialog-field">
+          <div class="dialog-field dialog-field-full">
             <span class="dialog-field-label">Website</span>
             <span class="dialog-field-value" id="dp-website"></span>
           </div>
@@ -177,122 +265,129 @@
     </div>
   </dialog>
 
-  <dialog id="user-edit-dialog" aria-modal="true" aria-label="Editar usuário">
-    <form method="dialog">
-      <header class="dialog-header">
-        <div class="dialog-names dialog-names-fill">
-          <h2 class="dialog-name dialog-name-sm">Editar Usuário</h2>
-          <span class="dialog-username" id="eu-subtitle"></span>
-        </div>
-        <button type="submit" class="dialog-close" id="user-edit-close-btn" aria-label="Fechar">&times;</button>
-      </header>
-      <div class="dialog-body" id="user-edit-dialog-body">
-        <fieldset>
-          <div class="edit-modal-grid">
-            <div class="form-group">
-              <label for="eu-name">Nome completo</label>
-              <input id="eu-name" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-username">Username</label>
-              <input id="eu-username" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-email">E-mail</label>
-              <input id="eu-email" type="email" />
-            </div>
-            <div class="form-group">
-              <label for="eu-phone">Telefone</label>
-              <input id="eu-phone" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-website">Website</label>
-              <input id="eu-website" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-city">Cidade</label>
-              <input id="eu-city" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-street">Rua</label>
-              <input id="eu-street" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-suite">Suíte</label>
-              <input id="eu-suite" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-zip">CEP</label>
-              <input id="eu-zip" type="text" />
-            </div>
-            <div class="form-group">
-              <label for="eu-company">Empresa</label>
-              <input id="eu-company" type="text" />
-            </div>
-            <div class="form-group full">
-              <label for="eu-catchphrase">Slogan da empresa</label>
-              <input id="eu-catchphrase" type="text" />
-            </div>
-            <div class="form-group full">
-              <label for="eu-bs">Ramo da empresa</label>
-              <input id="eu-bs" type="text" />
-            </div>
-          </div>
-        </fieldset>
-      </div>
-      <footer class="dialog-footer">
-        <button type="button" class="btn btn-ghost" id="user-edit-cancel-btn">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="user-edit-save-btn">Salvar alterações</button>
-      </footer>
-    </form>
-  </dialog>
-
-  <dialog id="post-edit-dialog" aria-modal="true" aria-label="Editar post">
-    <form method="dialog">
-      <header class="dialog-header">
-        <div class="dialog-names dialog-names-fill">
-          <h2 class="dialog-name dialog-name-sm">Editar Post</h2>
-        </div>
-        <button type="submit" class="dialog-close" id="post-edit-close-btn" aria-label="Fechar">&times;</button>
-      </header>
-      <div class="dialog-body">
-        <fieldset>
-          <div class="edit-modal-grid">
-            <div class="form-group full">
-              <label for="pe-title">Título</label>
-              <input id="pe-title" type="text" placeholder="Título do post..." />
-            </div>
-            <div class="form-group full">
-              <label for="pe-body">Conteúdo</label>
-              <textarea id="pe-body" placeholder="Escreva o conteúdo do post..." rows="8"></textarea>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-      <footer class="dialog-footer">
-        <button type="button" class="btn btn-ghost" id="post-edit-cancel-btn">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="post-edit-save-btn">Salvar post</button>
-      </footer>
-    </form>
-  </dialog>
-
-  <dialog id="delete-confirm-dialog" aria-modal="true" aria-label="Confirmar deleção">
-    <header class="dialog-header">
+  <dialog id="user-edit-dialog" aria-modal="true" aria-labelledby="user-edit-title">
+    <div class="dialog-header">
       <div class="dialog-names dialog-names-fill">
-        <h2 class="dialog-name dialog-name-sm" id="dc-title">Confirmar exclusão</h2>
+        <h2 class="dialog-name dialog-name-sm" id="user-edit-title">Editar Usuário</h2>
+        <span class="dialog-username" id="eu-subtitle"></span>
       </div>
-      <button class="dialog-close" id="delete-confirm-close-btn" aria-label="Fechar">&times;</button>
-    </header>
-    <div class="dialog-body">
-      <p id="dc-message" style="color: #e8e8f0; line-height: 1.6;"></p>
-      <footer class="dialog-footer">
-        <button class="btn btn-ghost" id="delete-confirm-cancel-btn">Cancelar</button>
-        <button class="btn btn-delete" id="delete-confirm-btn">Excluir</button>
-      </footer>
+      <button class="dialog-close" id="user-edit-close-btn" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="dialog-body" id="user-edit-dialog-body">
+      <fieldset>
+        <legend class="sr-only">Dados do usuário</legend>
+        <div class="edit-modal-grid">
+          <div class="form-group">
+            <label for="eu-name">Nome completo <span class="required-mark" aria-hidden="true">*</span></label>
+            <input id="eu-name" type="text" required aria-required="true" autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label for="eu-username">Username <span class="required-mark" aria-hidden="true">*</span></label>
+            <input id="eu-username" type="text" required aria-required="true" autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="eu-email">E-mail <span class="required-mark" aria-hidden="true">*</span></label>
+            <input id="eu-email" type="email" required aria-required="true" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="eu-phone">Telefone</label>
+            <input id="eu-phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="form-group">
+            <label for="eu-website">Website</label>
+            <input id="eu-website" type="url" placeholder="https://…" autocomplete="url" />
+          </div>
+          <div class="form-group">
+            <label for="eu-city">Cidade</label>
+            <input id="eu-city" type="text" autocomplete="address-level2" />
+          </div>
+          <div class="form-group">
+            <label for="eu-street">Rua</label>
+            <input id="eu-street" type="text" autocomplete="street-address" />
+          </div>
+          <div class="form-group">
+            <label for="eu-suite">Suíte / Apto</label>
+            <input id="eu-suite" type="text" />
+          </div>
+          <div class="form-group">
+            <label for="eu-zip">CEP</label>
+            <input id="eu-zip" type="text" autocomplete="postal-code" />
+          </div>
+          <div class="form-group">
+            <label for="eu-company">Empresa</label>
+            <input id="eu-company" type="text" autocomplete="organization" />
+          </div>
+          <div class="form-group full">
+            <label for="eu-catchphrase">Slogan da empresa</label>
+            <input id="eu-catchphrase" type="text" />
+          </div>
+          <div class="form-group full">
+            <label for="eu-bs">Ramo da empresa</label>
+            <input id="eu-bs" type="text" />
+          </div>
+        </div>
+      </fieldset>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-ghost" id="user-edit-cancel-btn">Cancelar</button>
+      <button type="button" class="btn btn-primary" id="user-edit-save-btn">Salvar alterações</button>
     </div>
   </dialog>
 
-  <div id="toast"></div>
+  <dialog id="post-edit-dialog" aria-modal="true" aria-labelledby="post-edit-title">
+    <div class="dialog-header">
+      <div class="dialog-names dialog-names-fill">
+        <h2 class="dialog-name dialog-name-sm" id="post-edit-title">Editar Post</h2>
+        <span class="dialog-username" id="pe-subtitle"></span>
+      </div>
+      <button class="dialog-close" id="post-edit-close-btn" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="dialog-body">
+      <fieldset>
+        <legend class="sr-only">Dados do post</legend>
+        <div class="edit-modal-grid">
+          <div class="form-group full">
+            <label for="pe-title">Título <span class="required-mark" aria-hidden="true">*</span></label>
+            <input id="pe-title" type="text" placeholder="Título do post…" required aria-required="true" maxlength="120"
+              autocomplete="off" />
+          </div>
+          <div class="form-group full">
+            <label for="pe-body">Conteúdo <span class="required-mark" aria-hidden="true">*</span></label>
+            <textarea id="pe-body" placeholder="Escreva o conteúdo do post…" rows="8" required aria-required="true"
+              maxlength="1000"></textarea>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-ghost" id="post-edit-cancel-btn">Cancelar</button>
+      <button type="button" class="btn btn-primary" id="post-edit-save-btn">Salvar post</button>
+    </div>
+  </dialog>
+
+  <dialog id="delete-confirm-dialog" aria-modal="true" aria-labelledby="dc-title">
+    <div class="dialog-header">
+      <div class="dialog-names dialog-names-fill">
+        <h2 class="dialog-name dialog-name-sm" id="dc-title" style="color: var(--color-danger);">
+          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Confirmar exclusão
+        </h2>
+      </div>
+      <button class="dialog-close" id="delete-confirm-close-btn" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="dialog-body" style="padding-bottom:16px;">
+      <div class="delete-warning-box">
+        <span class="delete-warning-icon" aria-hidden="true"><i class="fa-solid fa-trash-can"></i></span>
+        <p class="delete-warning-text" id="dc-message"></p>
+      </div>
+      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--color-muted);margin-top:8px;">
+        Esta ação não pode ser desfeita.
+      </p>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-ghost" id="delete-confirm-cancel-btn">Cancelar</button>
+      <button class="btn btn-danger-solid" id="delete-confirm-btn">Excluir</button>
+    </div>
+  </dialog>
 
   <script src="script.js"></script>
 </body>
